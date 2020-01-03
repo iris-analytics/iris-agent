@@ -91,13 +91,13 @@ export const init = (accountId, config = {}) => {
   }
   if (isset(config)) {
     if (isset(config.targetUrl)) {
-      defaults.targetUrl = config.targetUrl
+      defaults.targetUrl = config.targetUrl;
     }
     if (isset(config.cookiePrefix)) {
-      defaults.cookiePrefix = config.cookiePrefix
+      defaults.cookiePrefix = config.cookiePrefix;
     }
     if (isset(config.useBeacon)) {
-      defaults.useBeacon = config.useBeacon
+      defaults.useBeacon = config.useBeacon;
     }
   }
   ensureAndGetSessionID();
