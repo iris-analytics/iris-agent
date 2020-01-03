@@ -1,0 +1,4 @@
+include:
+  - project: 'ci-tools/cd-tools-ui'
+    ref: master
+    file: '/gitlab-templates/default.yml'

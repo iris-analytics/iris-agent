@@ -1,0 +1,10 @@
+{
+  "name": "iris-react-example",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "iris": "file:../..",
+    "react": "^16.6.0",
+    "react-dom": "npm:@hot-loader/react-dom"
+  }
+}

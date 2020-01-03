@@ -1,0 +1,7 @@
+node_modules
+.idea
+docker
+yarn-error.log
+package-lock.json
+coverage
+.eslintcache
