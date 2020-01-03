@@ -301,10 +301,10 @@ describe('index methods', () => {
   describe('init with options', () => {
     const accountId = 'account-123456';
     const options = {
-      targetUrl: "http://localhost:1777/iris/recordevent.gif",
-      cookiePrefix: "_ir",
-      useBeacon: false
-    }
+      targetUrl: 'http://localhost:1777/iris/recordevent.gif',
+      cookiePrefix: '_ir',
+      useBeacon: false,
+    };
     beforeEach(() => {
       init(accountId, options);
     });
