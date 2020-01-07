@@ -1,5 +1,5 @@
 /* eslint-disable */
-import defaults from '../src/defaults';
+import settings from '../src/settings';
 import cookie, { Url } from '../src/cookie';
 
 const href = 'http://somehost/url';
@@ -93,7 +93,7 @@ describe('cookie tests', () => {
     describe('set method', () => {
       test('passing only required params', () => {
         cookie.set(cookieName, cookieValue);
-        expect(global.document.cookie).toContain(`${defaults.cookiePrefix + cookieName}=${cookieValue}`);
+        expect(global.document.cookie).toContain(`${settings.options.cookiePrefix + cookieName}=${cookieValue}`);
 
       });
 
@@ -101,21 +101,21 @@ describe('cookie tests', () => {
         const name = 'test2';
         const value = '2';
         cookie.set(name, value, 60);
-        expect(global.document.cookie).toContain(`${defaults.cookiePrefix + name}=${value}`);
+        expect(global.document.cookie).toContain(`${settings.options.cookiePrefix + name}=${value}`);
       });
 
       test('passing minutes and path equal to "/"', () => {
         const name = 'test3';
         const value = '3';
         cookie.set(name, value, 60, '/');
-        expect(global.document.cookie).toContain(`${defaults.cookiePrefix + name}=${value}`);
+        expect(global.document.cookie).toContain(`${settings.options.cookiePrefix + name}=${value}`);
       });
 
       test('When we are passing a path different to "/" does not set the cookie on current one', () => {
         const name = 'test4';
         const value = '4';
         cookie.set(name, value, 60, '/some/path');
-        expect(global.document.cookie).not.toContain(`${defaults.cookiePrefix + name}=${value}`);
+        expect(global.document.cookie).not.toContain(`${settings.options.cookiePrefix + name}=${value}`);
       });
     });
 

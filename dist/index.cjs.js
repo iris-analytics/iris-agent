@@ -2,11 +2,14 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-const defaults = {
+const settings = {
   accountId: null,
-  cookiePrefix: '_iris_',
-  targetUrl: 'https://www.example.com/iris.gif',
-  useBeacon: true,
+  initted: false,
+  options: {
+    cookiePrefix: '_iris_',
+    targetUrl: '/',
+    useBeacon: true
+  }
 };
 
 /* eslint-disable no-bitwise */
@@ -51,11 +54,11 @@ const cookie = {
     const date = new Date();
     date.setTime(date.getTime() + minutes * 60 * 1000);
     const expires = `; expires=${date.toGMTString()}`;
-    document.cookie = `${defaults.cookiePrefix + name}=${value}${expires}; path=${path}`;
+    document.cookie = `${settings.options.cookiePrefix + name}=${value}${expires}; path=${path}`;
   },
 
   get(name) {
-    const prefixedName = `${defaults.cookiePrefix + name}=`;
+    const prefixedName = `${settings.options.cookiePrefix + name}=`;
     const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i += 1) {
       let c = ca[i];
@@ -133,6 +136,8 @@ const browser = {
   },
 };
 
+const EVENT_PAGELOAD = 'pageload';
+
 const ensureAndGetVisitorID = () => {
   let uid = cookie.get('uid');
   if (!isset(uid)) {
@@ -152,7 +157,7 @@ const ensureAndGetSessionID = () => {
 };
 
 const getContent = (eventType, data) => ({
-  id: defaults.accountId, // website Id
+  id: settings.accountId, // website Id
   uid: ensureAndGetVisitorID(), // user Id
   sid: ensureAndGetSessionID(), // Session id
   ev: eventType, // event being triggered
@@ -190,7 +195,7 @@ const getTargetUrl = (content) => {
   Object.keys(content).forEach((prop) => {
     queryString += `${prop}=${encodeURIComponent(content[prop])}&`;
   });
-  return defaults.targetUrl + queryString;
+  return settings.options.targetUrl + queryString;
 };
 
 const sendBeacon = (attributes) => {
@@ -206,40 +211,80 @@ const sendImage = (attributes) => {
   document.getElementsByTagName('body')[0].appendChild(img);
 };
 
+/**
+ * Fire an event
+ * @param {string} eventType name of the event
+ * @param {misc} data data attached to the event being fired
+ */
 const fire = (eventType, data) => {
+  if (settings.initted !== true) {
+    console.log("Iris not initted. Init first and/or check init arguments.");
+    return;
+  }
+
   const attributes = getContent(eventType, marshalData(data));
-  if (window.navigator.sendBeacon && defaults.useBeacon) {
+  if (window.navigator.sendBeacon && settings.options.useBeacon) {
     sendBeacon(attributes);
   } else {
     sendImage(attributes);
   }
 };
 
-const init = (accountId, config = {}) => {
-  if (defaults.accountId === null) {
-    defaults.accountId = accountId;
+/**
+ * Convenience method that will trigger an event "pageload" to help consistency
+ * @param {misc} data data attached to the event being fired
+ */
+const pageload = (data = {}) => {
+  fire(EVENT_PAGELOAD, data);
+};
+
+/**
+ * Method that must be invoked first to set iris
+ * @param {string} accountId
+ * @param {object} config
+ */
+const init = (accountId, config) => {
+
+  // If initted, don't do anything
+  if (settings.initted === true) {
+    console.log('Iris already initted. Nothing to do');
+    return;
   }
-  if (isset(config)) {
-    if (isset(config.targetUrl)) {
-      defaults.targetUrl = config.targetUrl;
-    }
-    if (isset(config.cookiePrefix)) {
-      defaults.cookiePrefix = config.cookiePrefix;
-    }
-    if (isset(config.useBeacon)) {
-      defaults.useBeacon = config.useBeacon;
-    }
+
+  // accountID must be set
+  if (!isset(accountId)) {
+    console.log('Iris: "accountId" must be set');
+    return;
+  }
+
+  // targetUrl must be set and must point to iris-backend ingestion path
+  if (!isset(config) || !isset(config.targetUrl)) {
+    console.log('Iris: "config.targetUrl" must be set');
+    return;
+  }
+  settings.accountId = accountId;
+  settings.options.targetUrl = config.targetUrl;
+
+  if (isset(config.cookiePrefix)) {
+    settings.options.cookiePrefix = config.cookiePrefix;
+  }
+
+  if (isset(config.useBeacon)) {
+    settings.options.useBeacon = config.useBeacon;
   }
   ensureAndGetSessionID();
   ensureAndGetVisitorID();
   cookie.setUtms();
+  settings.initted = true;
 };
 
 const Iris = {
   init,
   fire,
+  pageload,
 };
 
+exports.EVENT_PAGELOAD = EVENT_PAGELOAD;
 exports.default = Iris;
 exports.ensureAndGetSessionID = ensureAndGetSessionID;
 exports.ensureAndGetVisitorID = ensureAndGetVisitorID;
@@ -248,5 +293,6 @@ exports.getContent = getContent;
 exports.getTargetUrl = getTargetUrl;
 exports.init = init;
 exports.marshalData = marshalData;
+exports.pageload = pageload;
 exports.sendBeacon = sendBeacon;
 exports.sendImage = sendImage;

@@ -8,11 +8,12 @@
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
   <script>
-    Iris.init('XXX-ACCOUNT', { targetUrl: "http://localhost:1777/iris/recordevent.gif", cookiePrefix: "_ir" });
-    Iris.fire('pageload', { "foo": 1 });
-  </script>
-  <script>
     $(document).ready(function () {
+      // Init the Iris instance
+      Iris.init('XXX-ACCOUNT', { targetUrl: "http://iris-backend/recordevent.gif", cookiePrefix: "_ir" });
+      // Fire pageload event
+      Iris.pageload({ "foo": 1 });
+      // Listen for various events to happen fire them with Iris
       $(".button").click(function () {
         Iris.fire('click_button', { text: $(this).text() });
       });

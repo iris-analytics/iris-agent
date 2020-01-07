@@ -11,7 +11,7 @@ import Iris, {
   fire,
 } from '../src/index';
 import cookie from '../src/cookie';
-import defaults from '../src/defaults';
+import settings from '../src/settings';
 import browser from '../src/browser';
 
 const generateCookieMOCK = (exist = false) => {
@@ -90,7 +90,7 @@ describe('index methods', () => {
     };
     const content = getContent('fake event type', 'some data');
     test('returns correct id', () => {
-      expect(content.id).toBe(defaults.accountId);
+      expect(content.id).toBe(settings.accountId);
     });
 
     test('returns correct uid', () => {
@@ -188,12 +188,16 @@ describe('index methods', () => {
   });
 
   describe('getTargetUrl', () => {
+    beforeEach(() => {
+      init('xxx-account', { targetUrl: 'http://iris-backend/recordevent.gif' });
+    });
+
     test('returns all queries concatenated', () => {
       expect(getTargetUrl({
         testing: 'is',
         better: 'than',
         having: 'sex',
-      })).toBe(`${defaults.targetUrl}?testing=is&better=than&having=sex&`);
+      })).toBe(`${settings.options.targetUrl}?testing=is&better=than&having=sex&`);
     });
   });
 
@@ -232,7 +236,7 @@ describe('index methods', () => {
     describe('when sendBeacon it will be called', () => {
       test('When navigator have sendBeacon and default use useBeacon the sendBeacon function is called', () => {
         window.navigator.sendBeacon = jest.fn();
-        defaults.sendBeacon = true;
+        settings.options.sendBeacon = true;
         fire(eventType, data);
         expect(window.navigator.sendBeacon).toHaveBeenCalledTimes(1);
       });
@@ -250,37 +254,38 @@ describe('index methods', () => {
 
       test('When navigator have sendBeacon and default use useBeacon as false the sendImage function is called', () => {
         window.navigator.sendBeacon = jest.fn();
-        defaults.sendBeacon = false;
+        settings.options.sendBeacon = false;
       });
 
       test('When navigator does NOT have sendBeacon and default use useBeacon the sendImage function is called', () => {
         window.navigator.sendBeacon = undefined;
-        defaults.sendBeacon = true;
+        settings.options.sendBeacon = true;
       });
 
       test('When navigator does NOT have sendBeacon and default use as false useBeacon the sendImage function is called', () => {
         window.navigator.sendBeacon = undefined;
-        defaults.sendBeacon = false;
+        settings.options.sendBeacon = false;
       });
     });
   });
 
   describe('init', () => {
     const accountId = 'account-123456';
-    const initialAccountID = defaults.accountId;
+    const initialAccountID = settings.accountId;
 
     beforeEach(() => {
+      settings.initted = false;
       cookie.setUtms = jest.fn();
       cookie.get = generateCookieMOCK(true);
-      init(accountId);
+      init(accountId, { targetUrl: 'http://iris-backend/recordevent.gif' });
     });
 
     afterEach(() => {
-      defaults.accountId = initialAccountID;
+      settings.accountId = initialAccountID;
     });
 
-    test('the argument passed sets on default.accountId', () => {
-      expect(defaults.accountId).toEqual(accountId);
+    test('the argument passed sets on settings.accountId', () => {
+      expect(settings.accountId).toEqual(accountId);
     });
 
     test('ensureAndGetSessionID is called', () => {
@@ -301,22 +306,23 @@ describe('index methods', () => {
   describe('init with options', () => {
     const accountId = 'account-123456';
     const options = {
-      targetUrl: 'http://localhost:1777/iris/recordevent.gif',
+      targetUrl: 'http://iris-backend/recordevent.gif',
       cookiePrefix: '_ir',
       useBeacon: false,
     };
     beforeEach(() => {
+      settings.initted = false;
       init(accountId, options);
     });
     test('Expect targetUrl to be the one from options', () => {
-      expect(defaults.targetUrl).toEqual(options.targetUrl);
+      expect(settings.options.targetUrl).toEqual(options.targetUrl);
     });
     test('Expect cookiePrefix to be the one from options', () => {
-      expect(defaults.cookiePrefix).toEqual(options.cookiePrefix);
+      expect(settings.options.cookiePrefix).toEqual(options.cookiePrefix);
     });
 
     test('Expect useBeacon to be the one from options', () => {
-      expect(defaults.useBeacon).toEqual(options.useBeacon);
+      expect(settings.options.useBeacon).toEqual(options.useBeacon);
     });
   });
 
@@ -324,11 +330,11 @@ describe('index methods', () => {
     const accountId = 'account-123456';
     const accountId2 = 'account-000000';
     beforeEach(() => {
-      init(accountId);
-      init(accountId2);
+      init(accountId, { targetUrl: 'http://iris-backend/recordevent.gif' });
+      init(accountId2, { targetUrl: 'http://iris-backend/recordevent.gif' });
     });
     test('Expect account id not to be ovewritten', () => {
-      expect(defaults.accountId).toEqual(accountId);
+      expect(settings.accountId).toEqual(accountId);
     });
   });
 

@@ -1,4 +1,4 @@
-import defaults from './defaults';
+import settings from './settings';
 import cookie from './cookie';
 import browser from './browser';
 import { isset, generateId } from './utils';
@@ -22,7 +22,7 @@ export const ensureAndGetSessionID = () => {
 };
 
 export const getContent = (eventType, data) => ({
-  id: defaults.accountId, // website Id
+  id: settings.accountId, // website Id
   uid: ensureAndGetVisitorID(), // user Id
   sid: ensureAndGetSessionID(), // Session id
   ev: eventType, // event being triggered
@@ -60,7 +60,7 @@ export const getTargetUrl = (content) => {
   Object.keys(content).forEach((prop) => {
     queryString += `${prop}=${encodeURIComponent(content[prop])}&`;
   });
-  return defaults.targetUrl + queryString;
+  return settings.options.targetUrl + queryString;
 };
 
 export const sendBeacon = (attributes) => {
@@ -76,33 +76,62 @@ export const sendImage = (attributes) => {
   document.getElementsByTagName('body')[0].appendChild(img);
 };
 
+/**
+ * Fire an event
+ * @param {string} eventType name of the event
+ * @param {misc} data data attached to the event being fired
+ */
 export const fire = (eventType, data) => {
+  if (settings.initted !== true) {
+    // console.log('Iris not initted. Init first and/or check init arguments.');
+    return;
+  }
+
   const attributes = getContent(eventType, marshalData(data));
-  if (window.navigator.sendBeacon && defaults.useBeacon) {
+  if (window.navigator.sendBeacon && settings.options.useBeacon) {
     sendBeacon(attributes);
   } else {
     sendImage(attributes);
   }
 };
 
-export const init = (accountId, config = {}) => {
-  if (defaults.accountId === null) {
-    defaults.accountId = accountId;
+/**
+ * Method that must be invoked first to set iris
+ * @param {string} accountId
+ * @param {object} config
+ */
+export const init = (accountId, config) => {
+  // If initted, don't do anything
+  if (settings.initted === true) {
+    // console.log('Iris already initted. Nothing to do')
+    return;
   }
-  if (isset(config)) {
-    if (isset(config.targetUrl)) {
-      defaults.targetUrl = config.targetUrl;
-    }
-    if (isset(config.cookiePrefix)) {
-      defaults.cookiePrefix = config.cookiePrefix;
-    }
-    if (isset(config.useBeacon)) {
-      defaults.useBeacon = config.useBeacon;
-    }
+
+  // accountID must be set
+  if (!isset(accountId)) {
+    // console.log('Iris: "accountId" must be set')
+    return;
+  }
+
+  // targetUrl must be set and must point to iris-backend ingestion path
+  if (!isset(config) || !isset(config.targetUrl)) {
+    // console.log('Iris: "config.targetUrl" must be set')
+    return;
+  }
+  settings.accountId = accountId;
+  settings.options.targetUrl = config.targetUrl;
+
+  if (isset(config.cookiePrefix)) {
+    settings.options.cookiePrefix = config.cookiePrefix;
+  }
+
+  if (isset(config.useBeacon)) {
+    settings.options.useBeacon = config.useBeacon;
   }
   ensureAndGetSessionID();
   ensureAndGetVisitorID();
   cookie.setUtms();
+  settings.initted = true;
 };
 
 const Iris = {
