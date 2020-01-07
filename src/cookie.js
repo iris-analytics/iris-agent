@@ -1,4 +1,4 @@
-import defaults from './defaults';
+import settings from './settings';
 import { isset } from './utils';
 /**
  * All about Cookies
@@ -29,11 +29,11 @@ const cookie = {
     const date = new Date();
     date.setTime(date.getTime() + minutes * 60 * 1000);
     const expires = `; expires=${date.toGMTString()}`;
-    document.cookie = `${defaults.cookiePrefix + name}=${value}${expires}; path=${path}`;
+    document.cookie = `${settings.options.cookiePrefix + name}=${value}${expires}; path=${path}`;
   },
 
   get(name) {
-    const prefixedName = `${defaults.cookiePrefix + name}=`;
+    const prefixedName = `${settings.options.cookiePrefix + name}=`;
     const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i += 1) {
       let c = ca[i];
