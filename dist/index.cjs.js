@@ -8,8 +8,8 @@ const settings = {
   options: {
     cookiePrefix: '_iris_',
     targetUrl: '/',
-    useBeacon: true
-  }
+    useBeacon: true,
+  },
 };
 
 /* eslint-disable no-bitwise */
@@ -136,8 +136,6 @@ const browser = {
   },
 };
 
-const EVENT_PAGELOAD = 'pageload';
-
 const ensureAndGetVisitorID = () => {
   let uid = cookie.get('uid');
   if (!isset(uid)) {
@@ -218,7 +216,7 @@ const sendImage = (attributes) => {
  */
 const fire = (eventType, data) => {
   if (settings.initted !== true) {
-    console.log("Iris not initted. Init first and/or check init arguments.");
+    // console.log('Iris not initted. Init first and/or check init arguments.');
     return;
   }
 
@@ -231,35 +229,26 @@ const fire = (eventType, data) => {
 };
 
 /**
- * Convenience method that will trigger an event "pageload" to help consistency
- * @param {misc} data data attached to the event being fired
- */
-const pageload = (data = {}) => {
-  fire(EVENT_PAGELOAD, data);
-};
-
-/**
  * Method that must be invoked first to set iris
  * @param {string} accountId
  * @param {object} config
  */
 const init = (accountId, config) => {
-
   // If initted, don't do anything
   if (settings.initted === true) {
-    console.log('Iris already initted. Nothing to do');
+    // console.log('Iris already initted. Nothing to do')
     return;
   }
 
   // accountID must be set
   if (!isset(accountId)) {
-    console.log('Iris: "accountId" must be set');
+    // console.log('Iris: "accountId" must be set')
     return;
   }
 
   // targetUrl must be set and must point to iris-backend ingestion path
   if (!isset(config) || !isset(config.targetUrl)) {
-    console.log('Iris: "config.targetUrl" must be set');
+    // console.log('Iris: "config.targetUrl" must be set')
     return;
   }
   settings.accountId = accountId;
@@ -281,10 +270,8 @@ const init = (accountId, config) => {
 const Iris = {
   init,
   fire,
-  pageload,
 };
 
-exports.EVENT_PAGELOAD = EVENT_PAGELOAD;
 exports.default = Iris;
 exports.ensureAndGetSessionID = ensureAndGetSessionID;
 exports.ensureAndGetVisitorID = ensureAndGetVisitorID;
@@ -293,6 +280,5 @@ exports.getContent = getContent;
 exports.getTargetUrl = getTargetUrl;
 exports.init = init;
 exports.marshalData = marshalData;
-exports.pageload = pageload;
 exports.sendBeacon = sendBeacon;
 exports.sendImage = sendImage;
