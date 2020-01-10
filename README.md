@@ -78,7 +78,7 @@ yarn development
 yarn build
 ```
 
-## Example React Application (create-react-app)
+## Example React Application
 
 ```bash
 yarn example

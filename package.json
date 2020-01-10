@@ -1,6 +1,6 @@
 {
-  "name": "iris-js",
-  "version": "0.1.0",
+  "name": "iris-agent",
+  "version": "0.1.1",
   "private": true,
   "description": "Iris agent",
   "main": "dist/index.cjs.js",
@@ -15,7 +15,7 @@
     "test:notify": "jest --watch --notify",
     "test:coverage": "jest --coverage",
     "example:html": "yarn build && npx serve example/html",
-    "example": "yarn build && cd example/react && yarn install && yarn standalone-development-run development",
+    "example": "yarn build && cd example/react && yarn install && yarn development",
     "prebuild": "yarn lint && yarn test",
     "build": "rollup -c",
     "build:ci": "rollup -c"
@@ -51,10 +51,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 98,
-        "branches": 98,
-        "functions": 98,
-        "lines": 98
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
       }
     }
   }
