@@ -3,7 +3,9 @@ import Iris from 'iris';
 
 const App = () => {
   useEffect(() => {
-    Iris.init('XXX-ACCOUNT');
+    // Init the Iris instance
+    Iris.init('XXX-ACCOUNT', { targetUrl: "http://iris-backend/recordevent.gif", cookiePrefix: "_ir" });
+    // Fire pageload event
     Iris.fire('pageload', { "foo": 1 });
   });
 
