@@ -8,7 +8,7 @@ You can define events as you wish (not only page loads) and send a custom payloa
   - [Usage](#usage)
   - [Extend it](#extend-it)
   - [Build it](#build-it)
-  - [Example React Application (create-react-app)](#example-react-application-create-react-app)
+  - [Example React Application](#example-react-application)
   - [Example HTML](#example-html)
 
 ## Install
