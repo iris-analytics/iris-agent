@@ -54,7 +54,7 @@ Example:
 
 Once the library has been loaded and initted, you can use them using the `fire` method:
 
-```html
+```js
 <script>
     Iris.fire('EVENT_NAME', EVENT_DATA);
 </script>
