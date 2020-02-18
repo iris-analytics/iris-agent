@@ -4,17 +4,28 @@ This JavaScript library sends events data to [agent-backend](https://github.com/
 You can define events as you wish (not only page loads) and send a custom payload with each of them.
 
 - [Iris agent](#iris-agent)
+  - [Install](#install)
   - [Usage](#usage)
   - [Extend it](#extend-it)
   - [Build it](#build-it)
   - [Example React Application (create-react-app)](#example-react-application-create-react-app)
   - [Example HTML](#example-html)
 
+## Install
+
+```bash
+npm install iris-agent
+```
+or 
+```bash
+yarn add iris-agent
+```
+
 ## Usage
 
 Once the library is loaded (@todo info about how to load it using different include methods, in the meanwhile check [./example folder](./example) you must init the library this way:
 
-```html
+```js
 <script>
     Iris.init('ACCOUNT_ID', CONFIG);
 </script>
@@ -30,7 +41,7 @@ Where:
 
 Example:
 
-```html
+```js
   <script>
     Iris.init(
         'XXX-ACCOUNT',
@@ -56,7 +67,7 @@ Where:
 
 Example:
 
-```html
+```js
 <script>
     Iris.fire('pageview');
     Iris.fire('button_clicked', {text: "apply now!"});
