@@ -32,6 +32,7 @@
   "license": "SEE LICENSE IN LICENSE.md",
   "devDependencies": {
     "@babel/preset-env": "^7.7.1",
+    "@rollup/plugin-babel": "^5.0.2",
     "eslint": "^6.6.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
