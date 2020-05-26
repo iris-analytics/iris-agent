@@ -1,6 +1,7 @@
 import { terser } from 'rollup-plugin-terser';
 import sizes from 'rollup-plugin-sizes';
 import html from 'rollup-plugin-bundle-html';
+import babel from '@rollup/plugin-babel';
 import pkg from './package.json';
 
 export default [
@@ -22,7 +23,7 @@ export default [
       { file: pkg.main, format: 'cjs' },
       { file: pkg.module, format: 'es' },
     ],
-    plugins: [sizes()],
+    plugins: [sizes(), babel({ babelHelpers: 'bundled' })],
   },
 
   // Generate example html
