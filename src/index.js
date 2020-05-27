@@ -139,4 +139,6 @@ const Iris = {
   fire,
 };
 
+console.log('hello');
+
 export default Iris;

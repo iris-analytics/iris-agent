@@ -1,4 +1,4 @@
-name: Run tests
+name: Run lint, tests and build
 on: [push,pull_request]
 jobs:
   build:
@@ -8,5 +8,5 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: yarn install
-    - name: Run lint, test and build
+    - name: Run lint, tests and build
       run: yarn build

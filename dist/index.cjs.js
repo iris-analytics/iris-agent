@@ -308,6 +308,7 @@ var Iris = {
   init: init,
   fire: fire
 };
+console.log('hello');
 
 exports.default = Iris;
 exports.ensureAndGetSessionID = ensureAndGetSessionID;

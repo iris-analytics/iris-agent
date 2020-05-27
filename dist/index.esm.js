@@ -304,6 +304,7 @@ var Iris = {
   init: init,
   fire: fire
 };
+console.log('hello');
 
 export default Iris;
 export { ensureAndGetSessionID, ensureAndGetVisitorID, fire, getContent, getTargetUrl, init, marshalData, sendBeacon, sendImage };
