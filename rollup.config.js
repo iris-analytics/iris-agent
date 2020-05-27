@@ -13,7 +13,7 @@ export default [
       file: pkg.browser,
       format: 'umd',
     },
-    plugins: [sizes(), terser()],
+    plugins: [sizes(), babel({ babelHelpers: 'bundled' }), terser()],
   },
 
   // CommonJS (for Node) and ES module (for bundlers) build.
@@ -36,6 +36,7 @@ export default [
     },
     plugins: [
       sizes(),
+      babel({ babelHelpers: 'bundled' }),
       terser(),
       html({
         template: 'example/html/template.html',
