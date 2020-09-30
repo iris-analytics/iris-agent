@@ -29,7 +29,7 @@ const cookie = {
     const date = new Date();
     date.setTime(date.getTime() + minutes * 60 * 1000);
     const expires = `; expires=${date.toGMTString()}`;
-    document.cookie = `${settings.options.cookiePrefix + name}=${value}${expires}; path=${path}`;
+    document.cookie = `${settings.options.cookiePrefix + name}=${value}${expires}; path=${path}; SameSite=Lax;`;
   },
 
   get(name) {
