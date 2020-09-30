@@ -62,7 +62,7 @@ var cookie = {
     var date = new Date();
     date.setTime(date.getTime() + minutes * 60 * 1000);
     var expires = "; expires=".concat(date.toGMTString());
-    document.cookie = "".concat(settings.options.cookiePrefix + name, "=").concat(value).concat(expires, "; path=").concat(path, "; SameSite=Lax;");
+    document.cookie = "".concat(settings.options.cookiePrefix + name, "=").concat(value).concat(expires, "; path=").concat(path, "; SameSite=Strict;");
   },
   get: function get(name) {
     var prefixedName = "".concat(settings.options.cookiePrefix + name, "=");
