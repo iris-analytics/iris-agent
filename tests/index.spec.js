@@ -230,6 +230,15 @@ describe('index methods', () => {
   });
 
   describe('fire', () => {
+    beforeEach(() => {
+      settings.initted = true;
+    });
+
+    test('When settings.initted is false no do anything', () => {
+      settings.initted = false;
+      fire(eventType);
+    });
+
     test('Check when we are not passing data', () => {
       fire(eventType);
     });
@@ -307,6 +316,7 @@ describe('index methods', () => {
 
     describe('When is a NOT new visitor', () => {
       beforeEach(() => {
+        settings.initted = false;
         jest.clearAllMocks();
       });
 
@@ -317,21 +327,16 @@ describe('index methods', () => {
       });
 
       test('When is initted but no have accountId defined, no do nothing', () => {
-        settings.initted = false;
         init(null, backend);
         expect(cookie.get).toHaveBeenCalledTimes(0);
       });
 
       test('When is initted and have accountId but not have config defined, no do nothing', () => {
-        settings.initted = false;
-        settings.accountId = accountId;
         init(accountId, null);
         expect(cookie.get).toHaveBeenCalledTimes(0);
       });
 
       test('When is initted and have accountId but config miss targetUrl value, no do nothing', () => {
-        settings.initted = false;
-        settings.accountId = accountId;
         init(accountId, {});
         expect(cookie.get).toHaveBeenCalledTimes(0);
       });
