@@ -29,7 +29,8 @@ const cookie = {
     const date = new Date();
     date.setTime(date.getTime() + minutes * 60 * 1000);
     const expires = `; expires=${date.toGMTString()}`;
-    document.cookie = `${settings.options.cookiePrefix + name}=${value}${expires}; path=${path}`;
+    const sameSite = window.location.protocol === 'https:' ? '; SameSite=None; Secure' : '; SameSite=Lax';
+    document.cookie = `${settings.options.cookiePrefix + name}=${value}${expires}; path=${path}${sameSite}`;
   },
 
   get(name) {

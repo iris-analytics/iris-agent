@@ -62,7 +62,8 @@ var cookie = {
     var date = new Date();
     date.setTime(date.getTime() + minutes * 60 * 1000);
     var expires = "; expires=".concat(date.toGMTString());
-    document.cookie = "".concat(settings.options.cookiePrefix + name, "=").concat(value).concat(expires, "; path=").concat(path);
+    var sameSite = window.location.protocol === 'https:' ? '; SameSite=None; Secure' : '; SameSite=Lax';
+    document.cookie = "".concat(settings.options.cookiePrefix + name, "=").concat(value).concat(expires, "; path=").concat(path).concat(sameSite);
   },
   get: function get(name) {
     var prefixedName = "".concat(settings.options.cookiePrefix + name, "=");
@@ -247,7 +248,6 @@ var sendImage = function sendImage(attributes) {
 
 var fire = function fire(eventType, data) {
   if (settings.initted !== true) {
-    // console.log('Iris not initted. Init first and/or check init arguments.');
     return;
   }
 
@@ -268,19 +268,16 @@ var fire = function fire(eventType, data) {
 var init = function init(accountId, config) {
   // If initted, don't do anything
   if (settings.initted === true) {
-    // console.log('Iris already initted. Nothing to do')
     return;
   } // accountID must be set
 
 
   if (!isset(accountId)) {
-    // console.log('Iris: "accountId" must be set')
     return;
   } // targetUrl must be set and must point to iris-backend ingestion path
 
 
   if (!isset(config) || !isset(config.targetUrl)) {
-    // console.log('Iris: "config.targetUrl" must be set')
     return;
   }
 

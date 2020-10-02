@@ -83,7 +83,6 @@ export const sendImage = (attributes) => {
  */
 export const fire = (eventType, data) => {
   if (settings.initted !== true) {
-    // console.log('Iris not initted. Init first and/or check init arguments.');
     return;
   }
 
@@ -103,19 +102,16 @@ export const fire = (eventType, data) => {
 export const init = (accountId, config) => {
   // If initted, don't do anything
   if (settings.initted === true) {
-    // console.log('Iris already initted. Nothing to do')
     return;
   }
 
   // accountID must be set
   if (!isset(accountId)) {
-    // console.log('Iris: "accountId" must be set')
     return;
   }
 
   // targetUrl must be set and must point to iris-backend ingestion path
   if (!isset(config) || !isset(config.targetUrl)) {
-    // console.log('Iris: "config.targetUrl" must be set')
     return;
   }
   settings.accountId = accountId;

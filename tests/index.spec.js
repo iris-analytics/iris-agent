@@ -23,6 +23,7 @@ describe('index methods', () => {
   const eventType = 'pageload';
   const data = { foo: 1 };
   const attributes = getContent(eventType, marshalData(data));
+  const backend = { targetUrl: 'http://iris-backend/recordevent.gif' };
 
   describe('id getters and generators', () => {
     beforeEach(() => {
@@ -189,7 +190,7 @@ describe('index methods', () => {
 
   describe('getTargetUrl', () => {
     beforeEach(() => {
-      init('xxx-account', { targetUrl: 'http://iris-backend/recordevent.gif' });
+      init('xxx-account', backend);
     });
 
     test('returns all queries concatenated', () => {
@@ -229,6 +230,15 @@ describe('index methods', () => {
   });
 
   describe('fire', () => {
+    beforeEach(() => {
+      settings.initted = true;
+    });
+
+    test('When settings.initted is false no do anything', () => {
+      settings.initted = false;
+      fire(eventType);
+    });
+
     test('Check when we are not passing data', () => {
       fire(eventType);
     });
@@ -273,40 +283,70 @@ describe('index methods', () => {
     const accountId = 'account-123456';
     const initialAccountID = settings.accountId;
 
-    beforeEach(() => {
-      settings.initted = false;
-      cookie.setUtms = jest.fn();
-      cookie.get = generateCookieMOCK(true);
-      init(accountId, { targetUrl: 'http://iris-backend/recordevent.gif' });
+    describe('When is a new visitor', () => {
+      beforeEach(() => {
+        settings.initted = false;
+        cookie.setUtms = jest.fn();
+        cookie.get = generateCookieMOCK(true);
+        init(accountId, backend);
+      });
+
+      afterEach(() => {
+        settings.accountId = initialAccountID;
+      });
+
+      test('the argument passed sets on settings.accountId', () => {
+        expect(settings.accountId).toEqual(accountId);
+      });
+
+      test('ensureAndGetSessionID is called', () => {
+        expect(cookie.get).toHaveBeenCalledTimes(2);
+        expect(cookie.get).toHaveBeenCalledWith('sid');
+      });
+
+      test('ensureAndGetVisitorID is called', () => {
+        expect(cookie.get).toHaveBeenCalledTimes(2);
+        expect(cookie.get).toHaveBeenCalledWith('uid');
+      });
+
+      test('expect that cookie.setUtms to have been called', () => {
+        expect(cookie.setUtms).toHaveBeenCalledTimes(1);
+      });
     });
 
-    afterEach(() => {
-      settings.accountId = initialAccountID;
-    });
+    describe('When is a NOT new visitor', () => {
+      beforeEach(() => {
+        settings.initted = false;
+        jest.clearAllMocks();
+      });
 
-    test('the argument passed sets on settings.accountId', () => {
-      expect(settings.accountId).toEqual(accountId);
-    });
+      test('When settings.initted is true, no do nothing', () => {
+        settings.initted = true;
+        init(accountId, backend);
+        expect(cookie.get).toHaveBeenCalledTimes(0);
+      });
 
-    test('ensureAndGetSessionID is called', () => {
-      expect(cookie.get).toHaveBeenCalledTimes(2);
-      expect(cookie.get).toHaveBeenCalledWith('sid');
-    });
+      test('When is initted but no have accountId defined, no do nothing', () => {
+        init(null, backend);
+        expect(cookie.get).toHaveBeenCalledTimes(0);
+      });
 
-    test('ensureAndGetVisitorID is called', () => {
-      expect(cookie.get).toHaveBeenCalledTimes(2);
-      expect(cookie.get).toHaveBeenCalledWith('uid');
-    });
+      test('When is initted and have accountId but not have config defined, no do nothing', () => {
+        init(accountId, null);
+        expect(cookie.get).toHaveBeenCalledTimes(0);
+      });
 
-    test('expect that cookie.setUtms to have been called', () => {
-      expect(cookie.setUtms).toHaveBeenCalledTimes(1);
+      test('When is initted and have accountId but config miss targetUrl value, no do nothing', () => {
+        init(accountId, {});
+        expect(cookie.get).toHaveBeenCalledTimes(0);
+      });
     });
   });
 
   describe('init with options', () => {
     const accountId = 'account-123456';
     const options = {
-      targetUrl: 'http://iris-backend/recordevent.gif',
+      ...backend,
       cookiePrefix: '_ir',
       useBeacon: false,
     };
@@ -330,8 +370,8 @@ describe('index methods', () => {
     const accountId = 'account-123456';
     const accountId2 = 'account-000000';
     beforeEach(() => {
-      init(accountId, { targetUrl: 'http://iris-backend/recordevent.gif' });
-      init(accountId2, { targetUrl: 'http://iris-backend/recordevent.gif' });
+      init(accountId, backend);
+      init(accountId2, backend);
     });
     test('Expect account id not to be ovewritten', () => {
       expect(settings.accountId).toEqual(accountId);
