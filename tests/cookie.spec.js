@@ -7,19 +7,27 @@ const hostname = 'somehost';
 const protocol = 'http:';
 
 const initialWindowLocation = global.window.location;
-
-delete global.window.location;
-global.window.location = {
-  href,
-  protocol,
-  hostname,
-};
 const someUtms = '?utm_source=Google&utm_medium=web';
 const utms = '?utm_source=Google&utm_medium=web&utm_term=test&utm_content=onLoadPage&utm_campaign=testing';
 const utm = 'utm_content';
 const utmValue = 'onLoadPage';
+const cookieName = 'test1';
+const cookieValue = '1';
+
+const removeCookie = (name) => {
+  global.document.cookie = `${settings.options.cookiePrefix + name}=1; expires=1 Jan 1970 00:00:00 GMT;`
+}
 
 describe('cookie tests', () => {
+  beforeAll(() => {
+    delete global.window.location;
+    global.window.location = {
+      href,
+      protocol,
+      hostname,
+    };
+  });
+
   afterAll(() => {
     delete global.window.location;
     global.window.location = initialWindowLocation;
@@ -87,14 +95,11 @@ describe('cookie tests', () => {
   });
 
   describe('cookie methods', () => {
-    const cookieName = 'test1';
-    const cookieValue = '1';
-
     describe('set method', () => {
       test('passing only required params', () => {
         cookie.set(cookieName, cookieValue);
         expect(global.document.cookie).toContain(`${settings.options.cookiePrefix + cookieName}=${cookieValue}`);
-
+        removeCookie(cookieName);
       });
 
       test('passing minutes', () => {
@@ -102,6 +107,7 @@ describe('cookie tests', () => {
         const value = '2';
         cookie.set(name, value, 60);
         expect(global.document.cookie).toContain(`${settings.options.cookiePrefix + name}=${value}`);
+        removeCookie(name);
       });
 
       test('passing minutes and path equal to "/"', () => {
@@ -109,6 +115,7 @@ describe('cookie tests', () => {
         const value = '3';
         cookie.set(name, value, 60, '/');
         expect(global.document.cookie).toContain(`${settings.options.cookiePrefix + name}=${value}`);
+        removeCookie(name);
       });
 
       test('When we are passing a path different to "/" does not set the cookie on current one', () => {
@@ -116,11 +123,17 @@ describe('cookie tests', () => {
         const value = '4';
         cookie.set(name, value, 60, '/some/path');
         expect(global.document.cookie).not.toContain(`${settings.options.cookiePrefix + name}=${value}`);
+        removeCookie(name);
       });
     });
 
     describe('get method', () => {
+      afterAll(() => {
+        removeCookie(cookieName);
+      });
+
       test('when we are passing a existing name of cookie', () => {
+        cookie.set(cookieName, cookieValue);
         expect(cookie.get(cookieName)).toEqual(cookieValue);
       });
 
@@ -130,6 +143,10 @@ describe('cookie tests', () => {
     });
 
     describe('setUtms method', () => {
+      afterEach(() => {
+        removeCookie('utm');
+      });
+
       test('when we doest NOT have utms on window.location.href', () => {
         global.window.location.href = href;
         cookie.setUtms();
@@ -154,6 +171,27 @@ describe('cookie tests', () => {
         expect(utmCookie).toContain('utm_content');
         expect(utmCookie).toContain('utm_campaign');
         expect(utmCookie).toContain(utmValue);
+      });
+    });
+
+    describe('SameSite type by protocol', () => {
+      afterEach(() => {
+        removeCookie(cookieName);
+      });
+
+      test('When protocol is http expect SameSite Lax', () => {
+        cookie.set(cookieName, cookieValue);
+        expect(global.document.cookie).toContain(cookieValue);
+      });
+
+      test('When protocol is https expect SameSite None and Secure', () => {
+        delete global.window.location;
+        global.window.location = {
+          href: 'https://somehost/url',
+          protocol: 'https:',
+          hostname,
+        };
+        cookie.set(cookieName, cookieValue);
       });
     });
   });
